@@ -1,0 +1,85 @@
+@ProjectManagement_HostAddress = http://localhost:5056
+@projectId = 1
+@taskId = 1
+# Set projectCode to the actual value returned by POST /api/projects.
+@projectCode = IT2611001
+
+### Projects: filter, multiple statuses, pagination and sorting
+GET {{ProjectManagement_HostAddress}}/api/projects?search=ERP&status=PENDING&status=HOLD&pageNumber=1&pageSize=20&sortBy=startDate&sortDirection=asc
+Accept: application/json
+
+### Create project (code is generated automatically)
+POST {{ProjectManagement_HostAddress}}/api/projects
+Content-Type: application/json
+
+{
+  "projectName": "ERP implementation",
+  "description": "New ERP project",
+  "manager": "An",
+  "requester": "Binh",
+  "status": "PENDING",
+  "startDate": "2026-11-01",
+  "endDate": "2026-12-31"
+}
+
+### Get project
+GET {{ProjectManagement_HostAddress}}/api/projects/{{projectId}}
+
+### Update project (omit projectCode; PUT replaces all editable values)
+PUT {{ProjectManagement_HostAddress}}/api/projects/{{projectId}}
+Content-Type: application/json
+
+{
+  "projectName": "ERP implementation",
+  "description": "Project on hold",
+  "manager": "An",
+  "requester": "Binh",
+  "status": "HOLD",
+  "startDate": "2026-11-01",
+  "endDate": "2026-12-31"
+}
+
+### Tasks: project, PIC, dates, paging, sorting
+GET {{ProjectManagement_HostAddress}}/api/tasks?projectCode={{projectCode}}&pic=An&startDateFrom=2026-11-01&endDateTo=2026-12-31&pageNumber=1&pageSize=10&sortBy=endDate&sortDirection=asc
+
+### Create task
+POST {{ProjectManagement_HostAddress}}/api/tasks
+Content-Type: application/json
+
+{
+  "projectCode": "{{projectCode}}",
+  "taskName": "Prepare database",
+  "description": "Create initial schema",
+  "pic": "An",
+  "status": "PENDING",
+  "startDate": "2026-11-01",
+  "endDate": "2026-11-15"
+}
+
+### Get task
+GET {{ProjectManagement_HostAddress}}/api/tasks/{{taskId}}
+
+### Update task
+PUT {{ProjectManagement_HostAddress}}/api/tasks/{{taskId}}
+Content-Type: application/json
+
+{
+  "projectCode": "{{projectCode}}",
+  "taskName": "Prepare database",
+  "description": "Schema completed",
+  "pic": "An",
+  "status": "COMPLETE",
+  "startDate": "2026-11-01",
+  "endDate": "2026-11-15"
+}
+
+### Delete task
+DELETE {{ProjectManagement_HostAddress}}/api/tasks/{{taskId}}
+
+### Delete project and all its tasks (irreversible)
+DELETE {{ProjectManagement_HostAddress}}/api/projects/{{projectId}}
+
+
+### Project statistics (all projects, no parameters)
+GET {{ProjectManagement_HostAddress}}/api/projects/statistics
+Accept: application/json

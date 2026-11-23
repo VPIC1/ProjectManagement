@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+/* Khai báo font để dùng chung qua utility font-sans của Tailwind. */
+@theme {
+  --font-sans: "Roboto", sans-serif;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.5;
+}
+
+/* Con trỏ cho các phần tử có thể bấm và các điều khiển bị vô hiệu hóa. */
+@layer base {
+  button:not(:disabled):not([aria-disabled="true"]),
+  a[href]:not([aria-disabled="true"]),
+  [role="button"]:not([aria-disabled="true"]):not(:disabled),
+  summary,
+  select:not(:disabled),
+  input:is([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"]):not(
+      :disabled
+    ) {
+    @apply cursor-pointer;
+  }
+
+  button:disabled,
+  select:disabled,
+  [role="button"][aria-disabled="true"] {
+    @apply cursor-not-allowed;
+  }
+}
+
+body {
+  @apply text-sm;
+}
+
+/* Font chữ dùng chung cho ứng dụng. */
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/Roboto-VariableFont_wdth,wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  @apply font-sans;
+}
+/* Bố cục toàn trang và nền ứng dụng. */
+html,
+body,
+#root {
+  @apply h-full w-full m-0 p-0 overflow-auto flex flex-col flex-1;
+}
+#root {
+  @apply bg-gray-200;
+}
+/* Thu gọn khoảng cách giữa các trường trong form dự án. */
+.project-details-form .ant-form-item {
+  @apply mb-2;
+}
+
+.project-details-form.ant-form-vertical .ant-form-item-label {
+  @apply pb-1;
+}
+
+/* Cân đối bảng thông tin dự án: nhãn không xuống dòng, mô tả chiếm hàng riêng. */
+.project-summary.ant-descriptions .ant-descriptions-view table {
+  @apply table-fixed;
+}
+
+.project-summary.ant-descriptions .ant-descriptions-item-label {
+  @apply w-28 whitespace-nowrap;
+}
+
+.project-summary.ant-descriptions .ant-descriptions-item-content {
+  @apply break-words;
+}
+
+/* Bố cục modal dự án toàn màn hình, thay cho style inline trong component. */
+.project-detail-modal.ant-modal {
+  @apply top-0 m-0 max-w-[100vw] pb-0;
+}
+
+.project-detail-modal.ant-modal .project-detail-modal__container {
+  @apply flex h-dvh flex-col rounded-none p-0;
+}
+
+.project-detail-modal.ant-modal .project-detail-modal__header {
+  @apply m-0 border-b border-gray-200 px-6 py-4;
+}
+
+.project-detail-modal.ant-modal .project-detail-modal__body {
+  @apply relative min-h-0 flex-1 overflow-auto bg-gray-100 p-4;
+}
+
+/* Khi sửa dự án, form chiếm phần còn lại của modal và tự cuộn một lần.
+   Khóa cuộn lớp ngoài để không xuất hiện hai thanh cuộn hoặc lộ task ở cuối. */
+.project-detail-modal.ant-modal .project-detail-modal__body--editing {
+  @apply overflow-hidden;
+}
+
+/* Giới hạn phần nội dung modal công việc, giữ thanh nút thao tác bên ngoài vùng cuộn. */
+.ant-modal .ant-modal-container .task-editor-modal__body {
+  @apply max-h-[70dvh] overflow-y-auto;
+}
+
+/* Chế độ tập trung: chỉ bật khi chỉnh sửa dự án đã có, không áp dụng cho thêm mới. */
+.project-edit-focus__panel {
+  @apply relative transition-[box-shadow,border-color] duration-[180ms] ease-[ease] motion-reduce:transition-none;
+}
+
+/* Đưa khung chỉnh sửa lên trên lớp kính mờ, thêm viền sáng và bóng đổ. */
+.project-edit-focus__panel--active {
+  @apply z-[2] border-white/95 bg-white/[0.97];
+  /* Bóng đổ nhiều lớp tùy chỉnh để giữ nguyên hiệu ứng kính và viền sáng. */
+  @apply shadow-[0_0_0_1px_rgba(239,68,68,0.15),0_18px_50px_rgba(15,23,42,0.18),inset_0_1px_0_rgba(255,255,255,0.95)];
+}
+
+/* Lớp kính phủ vùng xung quanh form: làm mờ task và chặn bấm xuyên xuống nền. */
+.project-edit-focus__veil {
+  @apply absolute inset-0 z-[1] rounded-[inherit] bg-linear-135 from-white/35 to-slate-200/40 backdrop-blur-[9px] backdrop-saturate-[130%];
+}
+
+/* Làm mờ tiêu đề modal để tập trung vào khung chỉnh sửa. */
+.project-edit-focus__header {
+  @apply blur-[2px] opacity-60;
+}
+
+/* Overrides for Ant Design-generated elements; layout and typography use Tailwind in JSX. */
+.dashboard-library-overrides .ant-progress {
+  @apply m-0 text-sm;
+}
+.dashboard-library-overrides .ant-tag {
+  @apply m-0 text-sm;
+}
+.dashboard-project-drawer .ant-tag {
+  @apply m-0 max-w-[45%] shrink-0 whitespace-normal text-sm;
+}
+
+/* Ghim tên, trạng thái và nút thao tác khi cuộn form chỉnh sửa dự án/import.
+   Bù khoảng padding của panel để nội dung cuộn không lộ phía trên thanh công cụ. */
+.project-edit-toolbar {
+  @apply sticky -top-3 z-10 -mx-3 -mt-3 border-b border-gray-200 bg-white px-3 py-3;
+}
+
+/* Legend của nhóm nội dung Việt–Trung: bỏ reset Ant Design tạo đường kẻ ngang. */
+.bilingual-content-field > legend {
+  @apply mb-0 w-auto border-0 p-0 px-1 text-sm font-medium text-gray-800;
+}

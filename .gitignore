@@ -1,0 +1,22 @@
+# Local configuration and credentials
+.env
+.env.local
+.env.*.local
+/ProjectManagement/appsettings.json
+**/appsettings.Local.json
+*.pfx
+*.p12
+
+# Build and test output
+**/bin/
+**/obj/
+**/TestResults/
+**/node_modules/
+**/dist/
+/ProjectManagement/Tests/.employee-filters-verification/
+
+# Editor files and logs
+.vs/
+*.user
+*.suo
+*.log
