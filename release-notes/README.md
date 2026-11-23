@@ -28,6 +28,7 @@ Mở đầu tệp chi tiết bằng số phiên bản, ngày phát hành và m�
 - **Sửa lỗi** ghi vấn đề người dùng từng gặp và kết quả sau khi sửa.
 - **Trước khi nâng cấp** ghi thay đổi có thể ảnh hưởng đến dữ liệu, cấu hình hoặc quy trình, cùng việc cần làm.
 - **Vấn đề đã biết** ghi hạn chế người dùng còn có thể gặp và cách xử lý tạm thời nếu có.
+- **Môi trường và thư viện** ghi yêu cầu của bản phát hành và những thành phần kỹ thuật đã thay đổi. Lấy phiên bản thư viện frontend từ `package-lock.json` và phiên bản NuGet đã khai báo từ cấu hình backend. Ghi riêng phiên bản SDK, runtime và công cụ thực tế dùng để kiểm thử hoặc triển khai khi đã xác minh, kèm trạng thái chưa xác minh nếu thiếu thông tin.
 
 Dùng liên kết tuyệt đối đến mã theo tag trong ghi chú để liên kết hoạt động cả trên GitHub Releases. Đối chiếu ghi chú với bản thực tế và kiểm tra các liên kết. Chạy `npm run check` trong thư mục frontend và lệnh sau từ thư mục gốc.
 
