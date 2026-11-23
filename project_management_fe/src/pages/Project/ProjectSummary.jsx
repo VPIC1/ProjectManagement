@@ -1,13 +1,12 @@
 import { Descriptions, Grid, Tag } from "antd";
 import useLanguage from "../../hooks/useLanguage";
-import useProjectUsers from "../../hooks/useProjectUsers";
+import ProjectUserTags from "../../components/ProjectUserTags";
 import useProjectStatusOptions from "../../hooks/useProjectStatusOptions";
 import { formatDate } from "../../utils/projectDetailUtils";
 
 // Thông tin dự án dùng chung; bản import chưa có mã cho đến khi lưu thành công.
 export default function ProjectSummary({ project }) {
   const { t, content } = useLanguage();
-  const { formatUsers } = useProjectUsers();
   const statuses = useProjectStatusOptions();
   const screens = Grid.useBreakpoint();
   const columns = screens.lg ? 4 : screens.sm ? 2 : 1;
@@ -44,7 +43,7 @@ export default function ProjectSummary({ project }) {
           key: "manager",
           label: t("Người phụ trách"),
           span: Math.min(2, columns),
-          children: formatUsers(project.manager),
+          children: <ProjectUserTags value={project.manager} />,
         },
         {
           key: "dates",

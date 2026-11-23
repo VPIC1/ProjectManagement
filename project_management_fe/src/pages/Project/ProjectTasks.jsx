@@ -20,7 +20,7 @@ import TaskEditorModal from "./TaskEditorModal";
 import TaskCompletionModal from "./TaskCompletionModal";
 import TaskStatusControl from "./TaskStatusControl";
 import { fetchAllProjectTasks, getTaskProgress } from "../../utils/projectTaskData";
-import useProjectUsers from "../../hooks/useProjectUsers";
+import ProjectUserTags from "../../components/ProjectUserTags";
 
 export default function ProjectTasks({
   projectCode,
@@ -35,7 +35,6 @@ export default function ProjectTasks({
 }) {
   const { t, content } = useLanguage();
   const PROJECT_STATUS_OPTIONS = useProjectStatusOptions();
-  const { formatUsers } = useProjectUsers();
   const [savedTasks, setTasks] = useState([]);
   const draftMode = previewTasks !== undefined;
   const readOnly = draftMode && !onDraftChange;
@@ -332,11 +331,9 @@ export default function ProjectTasks({
                         </Popover>
                       )}
                       <div className="mt-1 flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-500">
-                        <span>
-                          {t("Người thực hiện")}:{" "}
-                          <span className="text-gray-700">
-                            {formatUsers(task.pic, t("Chưa phân công"))}
-                          </span>
+                        <span className="inline-flex flex-wrap items-center gap-1">
+                          <span>{t("Người thực hiện")}:</span>
+                          <ProjectUserTags value={task.pic} fallback={t("Chưa phân công")} />
                         </span>
                         <span>
                           {t("Thời gian dự kiến")}: {formatDate(task.startDate)} –{" "}

@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [react(), tailwindcss()],
   build: {
     outDir: fileURLToPath(new URL("../ProjectManagement/wwwroot", import.meta.url)),
-    // wwwroot có thể chứa file khác; không xóa toàn bộ thư mục khi build React.
-    emptyOutDir: false,
+    // Recreate wwwroot on each build; static source files belong in public/.
+    emptyOutDir: true,
   },
 }));

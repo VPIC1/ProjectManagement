@@ -25,7 +25,7 @@ npm run check
 
 Giá trị đặt trong `.env.development` và `.env.production`. Biến `VITE_*` công khai trong bundle, không đặt mật khẩu hoặc API key ở đây. File `.env.*.local` có thể ghi đè cấu hình. Khởi động lại Vite sau khi sửa môi trường.
 
-`npm run build` xuất vào `../ProjectManagement/wwwroot`, không xóa toàn bộ thư mục này. Build frontend trước khi publish backend. Production dùng `/it-project-demo/dashboard` và `/it-project-demo/project`. Khi đổi alias, sửa VITE_BASE_PATH, VITE_API_URL và Hosting:PathBase của backend cùng nhau.
+`npm run build` xóa toàn bộ nội dung `../ProjectManagement/wwwroot` rồi tạo lại bản build mới. Các tệp tĩnh cần giữ phải đặt trong `public/` để Vite tự sao chép lại. Khi bấm Publish trong Visual Studio hoặc chạy `dotnet publish`, backend tự chạy `npm run build`, lấy các file frontend mới và làm sạch `wwwroot` ở thư mục publish. Các file ngoài `wwwroot` ở nơi publish không bị xóa bởi bước này. Máy publish cần Node.js/npm; khi chưa có `node_modules`, quy trình tự chạy `npm ci`. Production dùng `/it-project-demo/dashboard` và `/it-project-demo/project`. Khi đổi alias, sửa VITE_BASE_PATH, VITE_API_URL và Hosting:PathBase của backend cùng nhau.
 
 ## Tổ chức mã nguồn
 

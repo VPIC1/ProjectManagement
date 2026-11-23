@@ -1,0 +1,70 @@
+<Project>
+  <PropertyGroup>
+    <FrontendRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '..', 'project_management_fe'))</FrontendRoot>
+    <_FrontendSourceWebRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', 'wwwroot'))</_FrontendSourceWebRoot>
+  </PropertyGroup>
+
+  <!-- Build the frontend for command-line and Visual Studio publishing. -->
+  <Target Name="BuildFrontendBeforePublish"
+          BeforeTargets="GetCopyToPublishDirectoryItems;ComputeFilesToPublish"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <Error Condition="!Exists('$(FrontendRoot)package.json')" Text="Frontend project not found: $(FrontendRoot)" />
+    <Message Importance="high" Text="Building frontend and recreating wwwroot before publish..." />
+    <Exec WorkingDirectory="$(FrontendRoot)" Command="npm ci" Condition="!Exists('$(FrontendRoot)node_modules')" />
+    <Exec WorkingDirectory="$(FrontendRoot)" Command="npm run build" />
+  </Target>
+
+  <!-- Refresh Content before the SDK captures its static-asset manifest. -->
+  <Target Name="PrepareFrontendPublishStaticAssets"
+          BeforeTargets="ResolveProjectStaticWebAssets"
+          DependsOnTargets="BuildFrontendBeforePublish"
+          Condition="'$(DesignTimeBuild)' != 'true' And ('$(_IsPublishing)' == 'true' Or '$(DeployOnBuild)' == 'true' Or '$(PublishProfileImported)' == 'true')">
+    <ItemGroup>
+      <Content Remove="@(Content)" Condition="$([System.String]::Copy('%(Content.Identity)').Replace('\', '/').StartsWith('wwwroot/'))" />
+      <Content Include="wwwroot\**\*" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+  </Target>
+  <!-- Re-scan after Vite changes hashed filenames; never publish stale SDK items. -->
+  <Target Name="IncludeFreshFrontendInPublish"
+          AfterTargets="ComputeFilesToPublish"
+          DependsOnTargets="BuildFrontendBeforePublish"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <ItemGroup>
+      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)"
+        Condition="$([System.String]::Copy('%(ResolvedFileToPublish.RelativePath)').Replace('\', '/').StartsWith('wwwroot/'))" />
+      <_FreshFrontendFiles Include="$(MSBuildProjectDirectory)\wwwroot\**\*" />
+      <ResolvedFileToPublish Include="@(_FreshFrontendFiles)">
+        <RelativePath>wwwroot\%(_FreshFrontendFiles.RecursiveDir)%(Filename)%(Extension)</RelativePath>
+        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+
+  <!-- Clean only the destination webroot; preserve settings/logs outside it. -->
+  <Target Name="CleanFrontendPublishDirectory"
+          BeforeTargets="CopyFilesToPublishDirectory"
+          Condition="'$(DesignTimeBuild)' != 'true' And '$(PublishDir)' != ''">
+    <PropertyGroup>
+      <_FrontendPublishRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(PublishDir)'))</_FrontendPublishRoot>
+      <_FrontendPublishWebRoot>$([MSBuild]::NormalizeDirectory('$(_FrontendPublishRoot)', 'wwwroot'))</_FrontendPublishWebRoot>
+    </PropertyGroup>
+    <Error Condition="'$(_FrontendPublishWebRoot)' == '$(_FrontendSourceWebRoot)'" Text="Publish directory must not be the backend source directory." />
+    <Error Condition="!$([System.String]::Copy('$(_FrontendPublishWebRoot)').StartsWith('$(_FrontendPublishRoot)'))" Text="Publish webroot must stay inside the publish directory." />
+    <RemoveDir Directories="$(_FrontendPublishWebRoot)" Condition="Exists('$(_FrontendPublishWebRoot)')" />
+  </Target>
+
+  <!-- Visual Studio Folder Publish can copy through a separate staging folder. -->
+  <Target Name="CleanFrontendFolderPublishDestination"
+          BeforeTargets="FileSystemPublish"
+          Condition="'$(DesignTimeBuild)' != 'true' And '$(PublishUrl)' != ''">
+    <PropertyGroup>
+      <_FrontendFolderRoot>$([MSBuild]::NormalizeDirectory('$(MSBuildProjectDirectory)', '$(PublishUrl)'))</_FrontendFolderRoot>
+      <_FrontendFolderWebRoot>$([MSBuild]::NormalizeDirectory('$(_FrontendFolderRoot)', 'wwwroot'))</_FrontendFolderWebRoot>
+    </PropertyGroup>
+    <Error Condition="'$(_FrontendFolderWebRoot)' == '$(_FrontendSourceWebRoot)'" Text="Folder Publish must not target the backend source directory." />
+    <Error Condition="!$([System.String]::Copy('$(_FrontendFolderWebRoot)').StartsWith('$(_FrontendFolderRoot)'))" Text="Folder webroot must stay inside the publish directory." />
+    <RemoveDir Directories="$(_FrontendFolderWebRoot)"
+               Condition="'$(_FrontendFolderWebRoot)' != '$(_FrontendPublishWebRoot)' And Exists('$(_FrontendFolderWebRoot)')" />
+  </Target>
+</Project>

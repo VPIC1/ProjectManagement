@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Alert, Button, Drawer, Empty, Grid, Progress, Spin, Tag } from "antd";
 import useLanguage from "../../hooks/useLanguage";
-import useProjectUsers from "../../hooks/useProjectUsers";
+import ProjectUserTags from "../../components/ProjectUserTags";
 import { getProjectById, getTasks } from "../../utils/endpoint";
 import { fetchAllProjectTasks } from "../../utils/projectTaskData";
 import { daysUntil, projectIssues } from "../../utils/dashboardInsights";
@@ -10,7 +10,6 @@ import { formatDate, formatDateTime, getRequestError } from "../../utils/project
 export default function DashboardProjectDrawer({ id, today, onClose, onOpenDetail }) {
   const { t, content } = useLanguage();
   const screens = Grid.useBreakpoint();
-  const { formatUsers } = useProjectUsers();
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -148,10 +147,12 @@ export default function DashboardProjectDrawer({ id, today, onClose, onOpenDetai
                               : t("Còn {days} ngày", { days: daysUntil(task, today) })}
                       </Tag>
                     </div>
-                    <p>
-                      {formatUsers(task.pic, t("Chưa có người phụ trách"))} ·{" "}
-                      {t("Kết thúc dự kiến")}: {formatDate(task.endDate)}
-                    </p>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
+                      <ProjectUserTags value={task.pic} fallback={t("Chưa có người phụ trách")} />
+                      <span>
+                        {t("Kết thúc dự kiến")}: {formatDate(task.endDate)}
+                      </span>
+                    </div>
                     <Progress percent={task.progress ?? 0} size="small" status="normal" />
                   </article>
                 ))
@@ -166,7 +167,9 @@ export default function DashboardProjectDrawer({ id, today, onClose, onOpenDetai
               <h3>{t("Thông tin chính")}</h3>
               <dl className="grid grid-cols-[8rem_minmax(0,1fr)] gap-2 text-sm [&_dt]:text-slate-500 [&_dd]:m-0 [&_dd]:wrap-anywhere">
                 <dt>{t("Người phụ trách")}</dt>
-                <dd>{formatUsers(project.manager)}</dd>
+                <dd>
+                  <ProjectUserTags value={project.manager} />
+                </dd>
                 <dt>{t("Phòng ban yêu cầu")}</dt>
                 <dd>{content(project, "requesterDepartmentName") ?? t("Chưa gán phòng ban")}</dd>
                 <dt>{t("Ngày bắt đầu")}</dt>

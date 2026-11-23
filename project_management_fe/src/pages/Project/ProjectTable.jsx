@@ -12,7 +12,7 @@ import { getRequestError } from "../../utils/projectDetailUtils";
 import ProjectDetailModal from "./ProjectDetailModal";
 import ProjectExcelImport from "./ProjectExcelImport";
 import useProjectUsers from "../../hooks/useProjectUsers";
-import { splitUserCodes } from "../../utils/projectUserValues";
+import ProjectUserTags from "../../components/ProjectUserTags";
 
 const displayDate = (value, withTime = false) =>
   value && dayjs(value).isValid()
@@ -23,7 +23,7 @@ const ProjectTable = ({ onChanged }) => {
   const { t, content } = useLanguage();
   const PROJECT_STATUS_OPTIONS = useProjectStatusOptions();
   const [notice, noticeHolder] = message.useMessage();
-  const { options: employeeOptions, formatUsers } = useProjectUsers();
+  const { options: employeeOptions } = useProjectUsers();
   const [searchText, setSearchText] = useState("");
   const [query, setQuery] = useState({ ...DEFAULT_PROJECT_QUERY });
   const [result, setResult] = useState({ items: [], totalCount: 0 });
@@ -172,22 +172,12 @@ const ProjectTable = ({ onChanged }) => {
           </div>
         ),
       },
-      sortable(t("Người phụ trách"), "manager", 220, {
-        ellipsis: { showTitle: false },
+      sortable(t("Người phụ trách"), "manager", 260, {
         filters: employeeFilters,
         filteredValue: query.managerCodes ?? null,
         filterMultiple: true,
         filterSearch: true,
-        render: (value) => (
-          <Tooltip
-            styles={{ root: { maxWidth: "min(480px, 90vw)" } }}
-            title={splitUserCodes(value).map((code) => (
-              <div key={code}>{formatUsers(code)}</div>
-            ))}
-          >
-            <span className="block truncate">{formatUsers(value)}</span>
-          </Tooltip>
-        ),
+        render: (value) => <ProjectUserTags value={value} grid />,
       }),
       sortable(t("Người yêu cầu"), "requester", 180, {
         ellipsis: { showTitle: false },
@@ -212,7 +202,6 @@ const ProjectTable = ({ onChanged }) => {
     query.status,
     query.managerCodes,
     employeeOptions,
-    formatUsers,
     content,
   ]);
 
