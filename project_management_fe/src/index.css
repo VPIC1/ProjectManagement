@@ -131,7 +131,8 @@ body,
 .dashboard-library-overrides .ant-tag {
   @apply m-0 text-sm;
 }
-.dashboard-project-drawer .ant-tag {
+/* Only status badges may wrap; employee tags keep their full code on one line. */
+.dashboard-project-drawer .dashboard-task-status-tag {
   @apply m-0 max-w-[45%] shrink-0 whitespace-normal text-sm;
 }
 

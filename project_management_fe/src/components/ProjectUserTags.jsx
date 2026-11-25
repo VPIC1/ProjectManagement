@@ -20,7 +20,7 @@ export default function ProjectUserTags({ value, grid = false, fallback = "—" 
         <Tooltip key={code} title={formatUser(code)} trigger={["hover", "focus"]}>
           <Tag
             color="blue"
-            className="m-0! inline-flex! w-fit items-center gap-1 whitespace-nowrap"
+            className="m-0! inline-flex! w-fit shrink-0 items-center gap-1 whitespace-nowrap"
             tabIndex={0}
           >
             <FaUser className="shrink-0 text-[10px]" aria-hidden="true" />

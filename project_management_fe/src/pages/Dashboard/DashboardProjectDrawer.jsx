@@ -137,7 +137,10 @@ export default function DashboardProjectDrawer({ id, today, onClose, onOpenDetai
                   >
                     <div>
                       <strong>{content(task, "taskName")}</strong>
-                      <Tag color={issues.overdue.includes(task) ? "error" : "warning"}>
+                      <Tag
+                        className="dashboard-task-status-tag"
+                        color={issues.overdue.includes(task) ? "error" : "warning"}
+                      >
                         {issues.overdue.includes(task)
                           ? t("Quá hạn {days} ngày", { days: -daysUntil(task, today) })
                           : !task.pic?.trim()
